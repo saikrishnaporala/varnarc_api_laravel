@@ -40,8 +40,7 @@ jobs:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
           username: ${{ secrets.CPANEL_FTP_USERNAME }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          protocol: ftp  # try plain ftp first
-          port: 21
+          protocol: ftps
           server-dir: /home/varnarcc/api_varnarc/
           local-dir: ./
           state-name: .ftp-deploy-sync-state.json
