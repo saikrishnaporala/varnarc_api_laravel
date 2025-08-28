@@ -21,5 +21,3 @@ Homestead.json
 /.vagrant
 .phpunit.result.cache
 varnarc-googleapi.json
-
-.DS_Store
