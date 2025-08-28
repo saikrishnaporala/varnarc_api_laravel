@@ -20,4 +20,4 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
-.varnarc-googleapi.json
+varnarc-googleapi.json
