@@ -38,6 +38,8 @@ jobs:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
           username: ${{ secrets.CPANEL_FTP_USERNAME }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          protocol: ftps    # <-- use FTPS
+          port: 21          # usually 21 for FTPS
           server-dir: /home/varnarcc/api_varnarc/ # adjust to hosting path
           local-dir: ./ # upload everything
           exclude: |
