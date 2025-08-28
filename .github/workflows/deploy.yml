@@ -13,6 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Create JSON key file
+        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > varnarc-googleapi.json
       # Install PHP & Composer for Laravel build
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -22,9 +24,6 @@ jobs:
 
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
-
-      - name: Create JSON key file
-        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > varnarc-googleapi.json
 
       - name: Generate Laravel config/cache
         run: |
