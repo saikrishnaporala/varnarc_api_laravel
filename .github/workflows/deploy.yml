@@ -44,6 +44,10 @@ jobs:
           port: 21
           server-dir: /home/varnarcc/api_varnarc/
           local-dir: ./
+          # Avoid deleting files and keep history of uploaded files
+          dangerous-clean-slate: false
+          # Slows down uploads (prevents server overload)
+          state-name: .ftp-deploy-sync-state.json
           exclude: |
             **/.git*
             **/.github*
