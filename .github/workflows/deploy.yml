@@ -40,14 +40,12 @@ jobs:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
           username: ${{ secrets.CPANEL_FTP_USERNAME }}
           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp  # try plain ftp first
           port: 21
           server-dir: /home/varnarcc/api_varnarc/
           local-dir: ./
-          # Avoid deleting files and keep history of uploaded files
-          dangerous-clean-slate: false
-          # Slows down uploads (prevents server overload)
           state-name: .ftp-deploy-sync-state.json
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
             **/.github*
