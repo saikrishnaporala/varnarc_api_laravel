@@ -1,40 +1,26 @@
-name: Deploy Laravel App (FTP)
+name: Deploy Laravel to Shared Hosting
 
 on:
   push:
     branches:
-      - main   # Change if your branch is different
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # Save Google credentials JSON to a file (for API use inside Laravel)
-      - name: Create JSON key file
-        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > storage/app/varnarc-googleapi.json
-
-      # Install PHP & Composer for Laravel build
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, bcmath, pdo, tokenizer, xml, ctype, fileinfo, json, curl, openssl
-
-      - name: Install Composer dependencies
+      - name: Install PHP dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      - name: Generate Laravel caches
+      - name: Build frontend
         run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
+          npm install
+          npm run build
 
-      # FTP Deploy (only upload production files)
-      - name: FTP Deploy
+      - name: Upload to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -43,19 +29,8 @@ jobs:
           protocol: ftps
           server-dir: /home/varnarcc/api_varnarc/
           local-dir: ./
-          state-name: .ftp-deploy-sync-state.json
-          dangerous-clean-slate: false
           exclude: |
             **/.git*
-            **/.github*
             **/node_modules/**
             **/tests/**
-            **/storage/logs/**
-            **/storage/framework/cache/**
-            **/storage/framework/sessions/**
-            **/storage/framework/views/**
-            **/.env
-            **/docker-compose*
-            **/Dockerfile
-            **/phpunit.xml
-            **/varnarc-googleapi.json
+            **/.github/**
