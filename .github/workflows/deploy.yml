@@ -1,4 +1,4 @@
-name: Deploy Laravel to Shared Hosting
+name: Deploy Laravel App (FTP)
 
 on:
   push:
@@ -10,17 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Install PHP dependencies
+      - name: Cache FTP deploy state
+        uses: actions/cache@v3
+        with:
+          path: .ftp-deploy-sync-state.json
+          key: ftp-deploy-state
+
+      - name: Create JSON key file
+        run: echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}' > storage/app/varnarc-googleapi.json
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, pdo, tokenizer, xml, ctype, fileinfo, json, curl, openssl
+
+      - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      - name: Build frontend
+      - name: Generate Laravel caches
         run: |
-          npm install
-          npm run build
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
 
-      - name: Upload to FTP
+      - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.CPANEL_FTP_SERVER }}
@@ -29,8 +46,19 @@ jobs:
           protocol: ftps
           server-dir: /home/varnarcc/api_varnarc/
           local-dir: ./
+          state-name: .ftp-deploy-sync-state.json
+          dangerous-clean-slate: false
           exclude: |
             **/.git*
+            **/.github*
             **/node_modules/**
             **/tests/**
-            **/.github/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/.env
+            **/docker-compose*
+            **/Dockerfile
+            **/phpunit.xml
+            **/varnarc-googleapi.json
